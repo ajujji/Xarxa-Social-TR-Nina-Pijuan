@@ -1,0 +1,59 @@
+{% extends 'app/layout.html' %}
+{% load static %}
+{% block script %}
+    <script src="{% static 'app/profile.js' %}"></script>
+    <script src="{% static 'app/createElements.js' %}"></script>
+    <script src="{% static 'app/API.js' %}"></script>
+    <script src="{% static 'app/posts.js' %}"></script>
+    <script src="{% static 'app/follow.js' %}"></script>
+    <script src="{% static 'app/like.js' %}"></script>
+    <script src="{% static 'app/getCookies.js' %}"></script>
+    <script src="{% static 'app/edit.js' %}"></script>
+{% endblock %}
+
+{% block username %}
+    {{ requested_user.username|json_script:"username" }}
+    {{ user.is_authenticated|json_script:"user_is_authenticated" }}
+{% endblock %}
+
+{% block body %}
+    <br>
+    <div class="w-75 mx-auto">
+        <h5 id="ProfileUsernameContainer">
+            @{{ requested_user.username }} 
+        </h5>
+
+        <h6 id="ProfileFollowersContainer">
+            Posts ({{ posts_count }}) | Following ({{ following_count }}) | Followers ({{ followers_count }})
+        </h6>
+
+        {% if user != requested_user and user.is_authenticated %}
+            {% csrf_token %}
+            <button type="button" class="btn btn-sm btn-primary" id="ProfileFollowButton">
+                {% if is_following %}
+                    Unfollow
+                {% else %}
+                    Follow
+                {% endif %}
+            </button>
+        {% endif %}
+        
+        <h6></h6>
+
+        <div class="sidebar">
+            <h5>Post Sentiment Overview</h5>
+            <ul>
+                <li>Positive Posts: {{ positive_posts_count }}</li>
+                <li>Neutral Posts: {{ neutral_posts_count }}</li>
+                <li>Negative Posts: {{ negative_posts_count }}</li>
+            </ul>
+            <p><strong>Score: {{ requested_user.score }}</strong></p>
+        </div>
+    </div>
+
+    <div class="w-75 mx-auto" id="ProfilePostsContainer">
+    </div>
+
+    <br> 
+    <div class="w-75 mx-auto" id="ProfilePaginationContainer"></div>
+{% endblock %}
